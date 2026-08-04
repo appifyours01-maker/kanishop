@@ -1629,6 +1629,7 @@ class _HomePageState extends State<HomePage> {
         final borderRadius = double.tryParse(props['borderRadius']?.toString() ?? '') ?? 8.0;
         final marginV = double.tryParse(props['margin']?.toString() ?? '') ?? 4.0;
         final paddingV = double.tryParse(props['padding']?.toString() ?? '') ?? 16.0;
+
         return Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: marginV),
@@ -1693,40 +1694,50 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 8),
                   ],
                   if (email.isNotEmpty) ...[
-                    Row(
-                      children: [
-                        Icon(Icons.email, color: iconColor, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            email,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: textColor,
-                              decoration: TextDecoration.underline,
+                    GestureDetector(
+                      onTap: () async {
+                        await launchUrl(Uri.parse('mailto:' + email), mode: LaunchMode.externalApplication);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.email, color: iconColor, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              email,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: textColor,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 8),
                   ],
                   if (phone.isNotEmpty) ...[
-                    Row(
-                      children: [
-                        Icon(Icons.phone, color: iconColor, size: 16),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            phone,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: textColor,
-                              decoration: TextDecoration.underline,
+                    GestureDetector(
+                      onTap: () async {
+                        await launchUrl(Uri.parse('tel:' + phone.replaceAll(RegExp(r'[^+0-9]'), '')), mode: LaunchMode.externalApplication);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.phone, color: iconColor, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              phone,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: textColor,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 8),
                   ],
