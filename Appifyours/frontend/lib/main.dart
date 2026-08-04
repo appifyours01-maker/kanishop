@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'screens/element_screen/delivery.dart';
 import 'chatbot.dart';
 import 'services/api_service.dart';
@@ -491,7 +492,7 @@ class AdminManager {
   static Future<String?> _autoDetectAdminId() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.14:5000/api/admin/app-info'),
+        Uri.parse('http://192.168.0.15:5000/api/admin/app-info'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
@@ -657,7 +658,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final adminId = await AdminManager.getCurrentAdminId();
       final response = await http.post(
-        Uri.parse('http://192.168.0.14:5000/api/login'),
+        Uri.parse('http://192.168.0.15:5000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': _emailController.text.trim(),
@@ -1696,7 +1697,16 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Icon(Icons.email, color: iconColor, size: 16),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(email, style: TextStyle(fontSize: 12, color: textColor))),
+                        Expanded(
+                          child: Text(
+                            email,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: textColor,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1706,7 +1716,16 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Icon(Icons.phone, color: iconColor, size: 16),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(phone, style: TextStyle(fontSize: 12, color: textColor))),
+                        Expanded(
+                          child: Text(
+                            phone,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: textColor,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
