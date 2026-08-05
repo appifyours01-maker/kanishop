@@ -492,7 +492,7 @@ class AdminManager {
   static Future<String?> _autoDetectAdminId() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.15:5000/api/admin/app-info'),
+        Uri.parse('http://192.168.0.8:5000/api/admin/app-info'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
@@ -658,7 +658,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final adminId = await AdminManager.getCurrentAdminId();
       final response = await http.post(
-        Uri.parse('http://192.168.0.15:5000/api/login'),
+        Uri.parse('http://192.168.0.8:5000/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': _emailController.text.trim(),
@@ -1617,6 +1617,7 @@ class _HomePageState extends State<HomePage> {
       case 'StoreInfoWidget':
         // Dynamic StoreInfo Widget - prefers widget properties, falls back to API data
         final storeName = ((props['storeName'] ?? _dynamicStoreInfo['storeName'])?.toString().trim() ?? '');
+        final businessDescription = ((props['businessDescription'] ?? _dynamicStoreInfo['businessDescription'])?.toString().trim() ?? '');
         final address = ((props['address'] ?? _dynamicStoreInfo['address'])?.toString().trim() ?? '');
         final email = ((props['email'] ?? _dynamicStoreInfo['email'])?.toString().trim() ?? '');
         final phone = ((props['phone'] ?? _dynamicStoreInfo['phone'])?.toString().trim() ?? '');
@@ -1669,20 +1670,48 @@ class _HomePageState extends State<HomePage> {
                           child: const Icon(Icons.store, size: 24),
                         ),
                       const SizedBox(width: 12),
-                      if (storeName.isNotEmpty)
-                        Expanded(
-                          child: Text(
-                            storeName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                            ),
-                          ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (storeName.isNotEmpty)
+                              Text(
+                                storeName,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor,
+                                ),
+                              ),
+                            if (businessDescription.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  businessDescription,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                          ],
                         ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
+                  // Contact Us Section - always show header
+                  Text(
+                    'Contact Us',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   if (address.isNotEmpty) ...[
                     Row(
                       children: [
