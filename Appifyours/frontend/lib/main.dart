@@ -1,4 +1,3 @@
-import 'package:url_launcher/url_launcher.dart';
 import 'screens/element_screen/delivery.dart';
 import 'chatbot.dart';
 import 'services/api_service.dart';
@@ -492,7 +491,7 @@ class AdminManager {
   static Future<String?> _autoDetectAdminId() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.0.8:5000/api/admin/app-info'),
+        Uri.parse('https://appifyours.com/api/admin/app-info'),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
@@ -658,7 +657,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       final adminId = await AdminManager.getCurrentAdminId();
       final response = await http.post(
-        Uri.parse('http://192.168.0.8:5000/api/login'),
+        Uri.parse('https://appifyours.com/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': _emailController.text.trim(),
@@ -1617,7 +1616,6 @@ class _HomePageState extends State<HomePage> {
       case 'StoreInfoWidget':
         // Dynamic StoreInfo Widget - prefers widget properties, falls back to API data
         final storeName = ((props['storeName'] ?? _dynamicStoreInfo['storeName'])?.toString().trim() ?? '');
-        final businessDescription = ((props['businessDescription'] ?? _dynamicStoreInfo['businessDescription'])?.toString().trim() ?? '');
         final address = ((props['address'] ?? _dynamicStoreInfo['address'])?.toString().trim() ?? '');
         final email = ((props['email'] ?? _dynamicStoreInfo['email'])?.toString().trim() ?? '');
         final phone = ((props['phone'] ?? _dynamicStoreInfo['phone'])?.toString().trim() ?? '');
@@ -1630,7 +1628,6 @@ class _HomePageState extends State<HomePage> {
         final borderRadius = double.tryParse(props['borderRadius']?.toString() ?? '') ?? 8.0;
         final marginV = double.tryParse(props['margin']?.toString() ?? '') ?? 4.0;
         final paddingV = double.tryParse(props['padding']?.toString() ?? '') ?? 16.0;
-
         return Container(
           width: double.infinity,
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: marginV),
@@ -1670,48 +1667,20 @@ class _HomePageState extends State<HomePage> {
                           child: const Icon(Icons.store, size: 24),
                         ),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (storeName.isNotEmpty)
-                              Text(
-                                storeName,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                ),
-                              ),
-                            if (businessDescription.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  businessDescription,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey[600],
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                          ],
+                      if (storeName.isNotEmpty)
+                        Expanded(
+                          child: Text(
+                            storeName,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textColor,
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Contact Us Section - always show header
-                  Text(
-                    'Contact Us',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   if (address.isNotEmpty) ...[
                     Row(
                       children: [
@@ -1723,50 +1692,22 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 8),
                   ],
                   if (email.isNotEmpty) ...[
-                    GestureDetector(
-                      onTap: () async {
-                        await launchUrl(Uri.parse('mailto:' + email), mode: LaunchMode.externalApplication);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.email, color: iconColor, size: 16),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              email,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: textColor,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Icon(Icons.email, color: iconColor, size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(email, style: TextStyle(fontSize: 12, color: textColor))),
+                      ],
                     ),
                     const SizedBox(height: 8),
                   ],
                   if (phone.isNotEmpty) ...[
-                    GestureDetector(
-                      onTap: () async {
-                        await launchUrl(Uri.parse('tel:' + phone.replaceAll(RegExp(r'[^+0-9]'), '')), mode: LaunchMode.externalApplication);
-                      },
-                      child: Row(
-                        children: [
-                          Icon(Icons.phone, color: iconColor, size: 16),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              phone,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: textColor,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Icon(Icons.phone, color: iconColor, size: 16),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(phone, style: TextStyle(fontSize: 12, color: textColor))),
+                      ],
                     ),
                     const SizedBox(height: 8),
                   ],
