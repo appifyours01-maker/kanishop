@@ -354,34 +354,25 @@ app.post('/api/users/:id/orders', async (req, res) => {
 
     }
 
-    const requestedProducts = Array.isArray(req.body.products) && req.body.products.length > 0
-      ? req.body.products
-      : Array.isArray(req.body.items) && req.body.items.length > 0
-      ? req.body.items
-      : Array.isArray(user.cart)
-      ? user.cart
-      : [];
-
-    const products = requestedProducts.map((item) => ({
-      productId: item.productId ?? item.id,
-      name: item.name,
-      price: Number(item.price ?? item.unitPrice ?? item.selling_price ?? 0),
-      quantity: Number(item.quantity ?? item.units ?? 1),
-    }));
-
-    if (products.length === 0) {
-      return res.status(400).json({ success: false, error: 'No products provided for order' });
-    }
-
     const orderId = 'ORDER_' + Date.now();
 
-    const total = products.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = user.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
     const order = {
 
       orderId,
 
-      products,
+      products: user.cart.map(item => ({
+
+        productId: item.productId,
+
+        name: item.name,
+
+        price: item.price,
+
+        quantity: item.quantity
+
+      })),
 
       total,
 
@@ -391,31 +382,7 @@ app.post('/api/users/:id/orders', async (req, res) => {
 
     user.orders.push(order);
 
-    if (Array.isArray(user.cart) && products.length > 0) {
-      user.cart = user.cart
-        .map((cartItem) => {
-          const cartItemId = cartItem.productId ?? cartItem.id;
-          const purchasedItem = products.find(
-            (product) => product.productId === cartItemId || product.productId === cartItem.productId,
-          );
-
-          if (!purchasedItem) {
-            return cartItem;
-          }
-
-          const remainingQuantity = Number(cartItem.quantity || 0) - Number(purchasedItem.quantity || 0);
-
-          return remainingQuantity > 0
-            ? {
-                ...cartItem,
-                quantity: remainingQuantity,
-              }
-            : null;
-        })
-        .filter(Boolean);
-    } else {
-      user.cart = [];
-    }
+    user.cart = []; // Clear cart after order
 
     await user.save();
 
